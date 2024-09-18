@@ -1,0 +1,214 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registration Form</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 20px;
+        }
+        .container {
+            max-width: 500px;
+            margin: 0 auto;
+            background-color: white;
+            padding: 20px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+        }
+        input, button {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 20px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        .error {
+            color: red;
+            font-size: 12px;
+            display: none;
+        }
+        .required {
+            color: red;
+        }
+        #termsText {
+            overflow: hidden;
+            height: 50px;
+        }
+        #showMore {
+            color: blue;
+            cursor: pointer;
+            font-size: 15px;
+        }
+        button {
+            width: 48%;
+            display: inline-block;
+            margin: 0 1%;
+            padding: 10px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Registration Form</h2>
+        <form id="registrationForm">
+            <label for="firstName">First Name <span class="required">*</span></label>
+            <input type="text" id="firstName" name="firstName" placeholder="Enter first name">
+            <div class="error" id="firstNameError">First name should contain only characters.</div>
+
+            <label for="lastName">Last Name <span class="required">*</span></label>
+            <input type="text" id="lastName" name="lastName" placeholder="Enter last name">
+            <div class="error" id="lastNameError">Last name should contain only characters.</div>
+
+            <label for="email">Email <span class="required">*</span></label>
+            <input type="email" id="email" name="email" placeholder="Enter email">
+            <div class="error" id="emailError">Invalid email format.</div>
+
+            <label for="contactNumber">Contact Number <span class="required">*</span></label>
+            <input type="tel" id="contactNumber" name="contactNumber" placeholder="Enter contact number">
+            <div class="error" id="contactNumberError">Contact number should contain only numbers.</div>
+
+            <label for="dob">Date of Birth <span class="required">*</span></label>
+            <input type="date" id="dob" name="dob">
+            <div class="error" id="dobError">Please select a valid date of birth.</div>
+
+            <label for="password">Password <span class="required">*</span></label>
+            <input type="password" id="password" name="password" placeholder="Enter password">
+            <div class="error" id="passwordError">Password must be at least 8 characters, have one uppercase letter, one special character, and not contain the first or last name.</div>
+
+            <label for="confirmPassword">Confirm Password <span class="required">*</span></label>
+            <input type="password" id="confirmPassword" name="confirmPassword" placeholder="Confirm password">
+            <div class="error" id="confirmPasswordError">Passwords do not match.</div>
+
+            <label for="terms">
+                <input type="checkbox" id="terms" name="terms"> I accept the Terms & Conditions
+            </label>
+            <div id="termsText">
+                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse varius enim in eros elementum tristique. Duis cursus, mi quis viverra ornare...
+            </div>
+            <span id="showMore">Show more</span>
+            <div class="error" id="termsError">You must accept the terms and conditions.</div>
+
+            <button type="button" onclick="submitForm()">Submit</button>
+            <button type="button" onclick="clearForm()">Clear</button>
+        </form>
+    </div>
+
+    <script>
+        // Show more functionality for Terms and Conditions
+        const showMore = document.getElementById("showMore");
+        const termsText = document.getElementById("termsText");
+
+        showMore.addEventListener("click", function() {
+            if (termsText.style.height === "50px") {
+                termsText.style.height = "auto";
+                showMore.innerText = "Show less";
+            } else {
+                termsText.style.height = "50px";
+                showMore.innerText = "Show more";
+            }
+        });
+
+        // Clear form fields
+        function clearForm() {
+            document.getElementById("registrationForm").reset();
+            document.querySelectorAll('.error').forEach((error) => {
+                error.style.display = 'none';
+            });
+        }
+
+        // Validate form fields on blur
+        const fields = ['firstName', 'lastName', 'email', 'contactNumber', 'dob', 'password', 'confirmPassword'];
+        fields.forEach(field => {
+            document.getElementById(field).addEventListener("blur", validateField);
+        });
+
+        // Submit form
+        function submitForm() {
+            let isValid = true;
+            fields.forEach(field => {
+                if (!validateField({ target: document.getElementById(field) })) {
+                    isValid = false;
+                }
+            });
+
+            const termsChecked = document.getElementById("terms").checked;
+            if (!termsChecked) {
+                document.getElementById("termsError").style.display = "block";
+                isValid = false;
+            } else {
+                document.getElementById("termsError").style.display = "none";
+            }
+
+            if (isValid) {
+                alert("Form submitted successfully!");
+                window.location.href = "exam.html"; // Navigate to exam page
+            }
+        }
+
+        // Validation logic
+        function validateField(event) {
+            const field = event.target;
+            const value = field.value;
+            let isValid = true;
+
+            switch (field.id) {
+                case 'firstName':
+                case 'lastName':
+                    if (!/^[a-zA-Z]+$/.test(value)) {
+                        isValid = false;
+                        document.getElementById(field.id + 'Error').style.display = "block";
+                    } else {
+                        document.getElementById(field.id + 'Error').style.display = "none";
+                    }
+                    break;
+                case 'email':
+                    if (!/^\S+@\S+\.\S+$/.test(value)) {
+                        isValid = false;
+                        document.getElementById('emailError').style.display = "block";
+                    } else {
+                        document.getElementById('emailError').style.display = "none";
+                    }
+                    break;
+                case 'contactNumber':
+                    if (!/^\d+$/.test(value)) {
+                        isValid = false;
+                        document.getElementById('contactNumberError').style.display = "block";
+                    } else {
+                        document.getElementById('contactNumberError').style.display = "none";
+                    }
+                    break;
+                case 'password':
+                    const firstName = document.getElementById("firstName").value;
+                    const lastName = document.getElementById("lastName").value;
+                    const passwordRegex = /^(?=.*[A-Z])(?=.*[^A-Za-z0-9])(?=.{8,})/;
+                    if (!passwordRegex.test(value) || value.includes(firstName) || value.includes(lastName)) {
+                        isValid = false;
+                        document.getElementById('passwordError').style.display = "block";
+                    } else {
+                        document.getElementById('passwordError').style.display = "none";
+                    }
+                    break;
+                case 'confirmPassword':
+                    const password = document.getElementById("password").value;
+                    if (value !== password) {
+                        isValid = false;
+                        document.getElementById('confirmPasswordError').style.display = "block";
+                    } else {
+                        document.getElementById('confirmPasswordError').style.display = "none";
+                    }
+                    break;
+            }
+
+            return isValid;
+        }
+    </script>
+</body>
+</html>
